@@ -56,7 +56,7 @@ static int test_MAX(void) {
 	TEST_START(MAX);
 
 	fails += MAX(-1, 0) == 0 ? 0 : 1;
-	fails += MAX(0, MAX(1, 2)) ? 0 : 1;
+	fails += MAX(0, MAX(1, 2)) == 2 ? 0 : 1;
 	fails += CMP_FLOAT(MAX(0.0f, 1.0f), 1.0f);
 
 	TEST_END();

@@ -30,35 +30,37 @@
 #define MACRO_TYPE_ASSERT_IMPL(a, b, line) _Static_assert(_Generic((a), __typeof__(b):1, default:0), "Type mismatch in macro at line " STRINGIFY(line))
 #define MACRO_TYPE_ASSERT(a, b) MACRO_TYPE_ASSERT_IMPL(a, b, __LINE__)
 
-// Generate a unique identifier that includes the line number to aid debugging.
-#define LVAR(a,b) CONCATENATE(CONCATENATE(_ ## a, __LINE__), CONCATENATE(_, b))
+// Generate identifier that includes the line number to aid debugging.
+#define EUTILS_MK_ID(a,b) CONCATENATE(CONCATENATE(_ ## a, __LINE__), CONCATENATE(_, b))
+// Generate unique identifier using argument as the base name
+#define GENID(a) EUTILS_MK_ID(a, __COUNTER__)
 
 // Require Statement Expressions GNU extension (GCC and clang has it)
-// LVAR is used to generate local identifier to avoid shadowing.
-#define MIN(a, b) MIN_IMPL(a, b, __COUNTER__)
-#define MIN_IMPL(a, b, ID) ({ \
-	__auto_type LVAR(x,ID) = (a); \
-	__auto_type LVAR(y,ID) = (b); \
-	MACRO_TYPE_ASSERT(LVAR(x,ID), LVAR(y,ID)); \
-	LVAR(x,ID) < LVAR(y,ID) ? LVAR(x,ID) : LVAR(y,ID); \
+// GENID is used to generate name for local identifier, avoiding shadowing.
+#define MIN(a, b) MIN_IMPL(a, b, GENID(x), GENID(y))
+#define MIN_IMPL(a, b, aID, bID) ({ \
+	__auto_type aID = (a); \
+	__auto_type bID = (b); \
+	MACRO_TYPE_ASSERT(aID, bID); \
+	(aID < bID ? aID : bID); \
 })
 
-#define MAX(a, b) MAX_IMPL(a, b, __COUNTER__)
-#define MAX_IMPL(a, b, ID) ({ \
-	__auto_type LVAR(x,ID) = (a); \
-	__auto_type LVAR(y,ID) = (b); \
-	MACRO_TYPE_ASSERT(LVAR(x,ID), LVAR(y,ID)); \
-	LVAR(x,ID) > LVAR(y,ID) ? LVAR(x,ID) : LVAR(y,ID); \
+#define MAX(a, b) MAX_IMPL(a, b, GENID(x), GENID(y))
+#define MAX_IMPL(a, b, aID, bID) ({ \
+	__auto_type aID = (a); \
+	__auto_type bID = (b); \
+	MACRO_TYPE_ASSERT(aID, bID); \
+	(aID > bID ? aID : bID); \
 })
 
-#define CLAMP(value, min, max) CLAMP_IMPL(value, min, max, __COUNTER__)
-#define CLAMP_IMPL(value, min, max, ID) ({ \
-	__auto_type LVAR(val,ID) = (value); \
-	__auto_type LVAR(x,ID) = (min); \
-	__auto_type LVAR(y,ID) = (max); \
-	MACRO_TYPE_ASSERT(LVAR(x,ID), LVAR(val,ID)); \
-	MACRO_TYPE_ASSERT(LVAR(y,ID), LVAR(val,ID)); \
-	(LVAR(val,ID) > LVAR(y,ID) ? LVAR(y,ID) : (LVAR(val,ID) < LVAR(x,ID) ? LVAR(x,ID) : LVAR(val,ID))); \
+#define CLAMP(value, min, max) CLAMP_IMPL(value, min, max, GENID(val), GENID(x), GENID(y))
+#define CLAMP_IMPL(value, min, max, valID, xID, yID) ({ \
+	__auto_type valID = (value); \
+	__auto_type xID = (min); \
+	__auto_type yID = (max); \
+	MACRO_TYPE_ASSERT(xID, valID); \
+	MACRO_TYPE_ASSERT(yID, valID); \
+	(valID > yID ? yID : (valID < xID ? xID : valID)); \
 })
 
 // Linearly interpolate v0->v1, where t is in [0, 1].
@@ -66,11 +68,11 @@
 // Compiler Explorer Verified that both GCC and clang compile this into
 // vsubss+vfmadd231ss at -O2 when AVX available.
 //
-#define LERP(v0, v1, t) LERP_IMPL(v0, v1, t, __COUNTER__)
-#define LERP_IMPL(v0, v1, t, ID) ({ \
-	__auto_type LVAR(x,ID) = (v0); \
-	__auto_type LVAR(y,ID) = (v1); \
-	MACRO_TYPE_ASSERT(LVAR(x,ID), LVAR(y,ID)); \
-	(LVAR(x,ID) + (t) * (LVAR(y,ID) - LVAR(x,ID))); \
+#define LERP(v0, v1, t) LERP_IMPL(v0, v1, t, GENID(x), GENID(y))
+#define LERP_IMPL(v0, v1, t, xID, yID) ({ \
+	__auto_type xID = (v0); \
+	__auto_type yID = (v1); \
+	MACRO_TYPE_ASSERT(xID, yID); \
+	(xID + (t) * (yID - xID)); \
 })
 // ALT: return (1 - t) * v0 + t * v1; // non-monotonic but precise at t=1=v1
