@@ -62,6 +62,10 @@
 })
 
 // Linearly interpolate v0->v1, where t is in [0, 1].
+//
+// Compiler Explorer Verified that both GCC and clang compile this into
+// vsubss+vfmadd231ss at -O2 when AVX available.
+//
 #define LERP(v0, v1, t) LERP_IMPL(v0, v1, t, __COUNTER__)
 #define LERP_IMPL(v0, v1, t, ID) ({ \
 	__auto_type LVAR(x,ID) = (v0); \
