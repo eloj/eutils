@@ -1,0 +1,8 @@
+prefix=@PREFIX@
+includedir=@INCLUDEDIR@
+
+Name: eutils
+Description: Utility Macros (C11+)
+Version: @VERSION@
+URL: https://github.com/eloj/eutils
+Cflags: -I${includedir}

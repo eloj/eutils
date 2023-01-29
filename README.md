@@ -1,12 +1,25 @@
-# C Utility Macros & Functions
+# C Utility Functions & Macros
 
 [![Build status](https://github.com/eloj/eutils/workflows/build/badge.svg)](https://github.com/eloj/eutils/actions/workflows/build.yml)
 
-There are a million of these, but this one is mine.
+A collection of useful C standalone functions and macros.
 
-I don't make any guarentees, and I may change interfaces and implementations at any point.
+I don't make _any_ guarentees, and I may change interfaces and implementations at any point.
 
-I don't expect anyone else to use any of this, but you're welcome to it.
+I don't expect anyone else to use any of this, but you're welcome to it if you want.
+
+## Installation
+
+You can copy and paste, curl or wget, or clone the repo to your heart's content.
+
+As an option, header(s) plus a `pkg-config` configuration can be installed:
+
+```bash
+$ PREFIX=$HOME/local make -B install
+...
+$ pkg-config eutils --cflags
+-I/home/user/local/include
+```
 
 ## License
 
