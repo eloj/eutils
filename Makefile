@@ -2,7 +2,7 @@ ARCH:=x86-64-v3
 OPT=-O3 -fomit-frame-pointer -fstrict-aliasing -march=$(ARCH) -mtune=native -msse4.2 -mavx2 -fno-math-errno
 WARNFLAGS=-Wall -Wextra -Wshadow -Wstrict-aliasing -Wcast-qual -Wcast-align -Wpointer-arith -Wredundant-decls -Wfloat-equal -Wdouble-promotion -Wswitch-enum
 CWARNFLAGS=-Wstrict-prototypes -Wmissing-prototypes
-MISCFLAGS=-fstack-protector -fvisibility=hidden -D_FILE_OFFSET_BITS=64
+MISCFLAGS=-fstack-protector -fvisibility=hidden
 DEVFLAGS=-ggdb -Wno-unused -D_FORTIFY_SOURCE=3
 
 RED='\033[0;31m'
@@ -53,7 +53,7 @@ install: eutils.pc
 	install -m 644 eutils.pc $(PKGCONFIGDIR)
 
 eutils.pc: eutils.pc.in
-	@echo Creating pkgconfig
+	@echo Creating pkgconfig for $(LIBVER)
 	@sed -E -e 's|@PREFIX@|$(PREFIX)|' \
 		-e 's|@INCLUDEDIR@|$(INCLUDEDIR)|' \
 		-e 's|@VERSION@|$(LIBVER)|' \

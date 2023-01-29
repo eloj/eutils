@@ -22,6 +22,10 @@
 #define SWAP(a, b) do { __auto_type T = (a); a = b; b = T; } while (0)
 #endif
 
+#ifndef UNUSED
+#define UNUSED(x) (x) __attribute__((unused))
+#endif
+
 // Requires C11 + __typeof__ extension
 #define MACRO_TYPE_ASSERT_IMPL(a, b, line) _Static_assert(_Generic((a), __typeof__(b):1, default:0), "Type mismatch in macro at line " STRINGIFY(line))
 #define MACRO_TYPE_ASSERT(a, b) MACRO_TYPE_ASSERT_IMPL(a, b, __LINE__)

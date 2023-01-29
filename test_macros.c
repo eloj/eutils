@@ -105,8 +105,7 @@ static int test_LERP(void) {
 	TEST_END();
 }
 
-int main(int argc, char *argv[]) {
-
+int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
 	failed += test_MIN();
