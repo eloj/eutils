@@ -50,26 +50,26 @@ static int test_LERP(void) {
 	int res;
 
 	res = LERP(0, 256, 0.0f);
-	if ((res = LERP(0, 256, 0.0f)) != 0) {
-		TEST_ERRMSG("Unexpected error: LERP(0, 256, 0.0f) returned %d, expected %d", res, 0);
+	if (res != 0) {
+		TEST_ERRMSG("Unexpected error: LERP(0, 256, 0.0f) returned %d, expected 0", res);
 		++fails;
 	}
 
 	res = LERP(0, 256, 1.0f);
 	if (res != 256) {
-		TEST_ERRMSG("Unexpected error: LERP(0, 256, 1.0f) returned %d, expected %d", res, 256);
+		TEST_ERRMSG("Unexpected error: LERP(0, 256, 1.0f) returned %d, expected 256", res);
 		++fails;
 	}
 
 	res = LERP(0, 256, 0.5f);
 	if (res != 128) {
-		TEST_ERRMSG("Unexpected error: LERP(0, 256, 0.5f) returned %d, expected %d", res, 128);
+		TEST_ERRMSG("Unexpected error: LERP(0, 256, 0.5f) returned %d, expected 128", res);
 		++fails;
 	}
 
 	float fres = LERP(0.0f, 1.0f, 0.5f);
 	if (CMP_FLOAT(fres, 0.5f)) {
-		TEST_ERRMSG("Unexpected error: LERP(0.0f, 1.0f, 0.5f) returned %f, expected %f", (double)fres, (double)0.5f);
+		TEST_ERRMSG("Unexpected error: LERP(0.0f, 1.0f, 0.5f) returned %a, expected %a", (double)fres, 0.5);
 		++fails;
 	}
 

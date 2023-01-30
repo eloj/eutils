@@ -20,7 +20,8 @@
 	} \
 	return fails;
 
-// Returns 0 if bit-pattern equal.
+// This is very special and only for these tests.
+// Returns 0 if bit-pattern equal, else 1.
 #define CMP_FLOAT(a,b) ({ \
 	float fa = (a); \
 	float fb = (b); \
