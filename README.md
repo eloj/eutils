@@ -19,7 +19,7 @@ change interfaces, rebase master and so on, at any point in time.
 
 ## Building
 
-There's currently nothing to build, it's just a header.
+There's currently nothing to build, it's just headers.
 
 Run tests with:
 
@@ -36,8 +36,8 @@ As an option, header(s) plus a `pkg-config` configuration can be installed:
 ```bash
 $ PREFIX=$HOME/local make -B install
 ...
-$ pkg-config eutils --cflags
--I/home/user/local/include
+$ pkg-config --cflags eutils
+-I/home/user/local/include/eutils
 ```
 
 ## License
