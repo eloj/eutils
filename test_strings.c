@@ -1,8 +1,8 @@
 /*
-	Run-Length Encoding & Decoding Utility Function Tests
-	Copyright (c) 2022, Eddy L O Jansson. Licensed under The MIT License.
+	String and String Buffer Utility Functions Tests
+	Copyright (c) 2022, 2023 Eddy L O Jansson. Licensed under The MIT License.
 
-	See https://github.com/eloj/rle-zoo
+	See https://github.com/eloj/eutils
 */
 #define UTILITY_IMPLEMENTATION
 #include "estrings.h"
