@@ -2,11 +2,20 @@
 
 [![Build status](https://github.com/eloj/eutils/workflows/build/badge.svg)](https://github.com/eloj/eutils/actions/workflows/build.yml)
 
-A collection of useful standalone C11+ functions and macros.
-
-I don't make _any_ guarentees, and I may change interfaces and implementations at any point.
+A collection of standalone C11+ functions and macros.
 
 I don't expect anyone else to use any of this, but you're welcome to it if you want.
+
+If you learn or use something from this repo, give it a star. Cost nothing.
+
+## Caveat Emptor
+
+If you are one of those programmers who insist your code must build on a
+toolchain from 1989, and hate it when libraries improve their API, then
+you are in the wrong place.
+
+I don't provide _any_ guarentees whatsoever about this code. I may rename files,
+change interfaces, rebase master and so on, at any point in time.
 
 ## Building
 
