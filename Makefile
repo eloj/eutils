@@ -37,25 +37,29 @@ LIBDIR ?= $(PREFIX)/lib
 INCLUDEDIR ?= $(PREFIX)/include
 PKGCONFIGDIR ?= $(LIBDIR)/pkgconfig
 
-all: test_macros
+all: test_macros test_strings
 
-test: test_macros
+test: test_macros test_strings
 	$(TEST_PREFIX) ./test_macros
+	$(TEST_PREFIX) ./test_strings
 
-test_macros: test_macros.c macros-eddy.h
+test_macros: test_macros.c internal/tests.h emacros.h
+	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
+
+test_strings: test_strings.c internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
 .PHONY: clean backup
 
 install: eutils.pc
-	@echo Installing header \& pkgconfig
-	install -m 644 macros-eddy.h $(INCLUDEDIR)
+	@echo Installing headers \& pkgconfig
+	install -m 644 -D -t $(INCLUDEDIR)/eutils emacros.h estrings.h
 	install -m 644 eutils.pc $(PKGCONFIGDIR)
 
 eutils.pc: eutils.pc.in
 	@echo Creating pkgconfig for $(LIBVER)
 	@sed -E -e 's|@PREFIX@|$(PREFIX)|' \
-		-e 's|@INCLUDEDIR@|$(INCLUDEDIR)|' \
+		-e 's|@INCLUDEDIR@|$(INCLUDEDIR)/eutils|' \
 		-e 's|@VERSION@|$(LIBVER)|' \
 		-e 's|=${PREFIX}/|=$${prefix}/|' \
 	$< >$@
@@ -66,4 +70,4 @@ backup:
 
 clean:
 	@echo -e $(YELLOW)Cleaning$(NC)
-	rm -f test_macros *.o core core.* eutils.pc
+	rm -f test_macros test_strings *.o core core.* eutils.pc
