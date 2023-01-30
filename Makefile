@@ -43,7 +43,7 @@ test: test_macros test_strings
 	$(TEST_PREFIX) ./test_macros
 	$(TEST_PREFIX) ./test_strings
 
-test_macros: test_macros.c internal/tests.h macros-eddy.h
+test_macros: test_macros.c internal/tests.h emacros.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
 test_strings: test_strings.c internal/tests.h
@@ -53,7 +53,7 @@ test_strings: test_strings.c internal/tests.h
 
 install: eutils.pc
 	@echo Installing headers \& pkgconfig
-	install -m 644 -D -t $(INCLUDEDIR)/eutils macros-eddy.h estrings.h
+	install -m 644 -D -t $(INCLUDEDIR)/eutils emacros.h estrings.h
 	install -m 644 eutils.pc $(PKGCONFIGDIR)
 
 eutils.pc: eutils.pc.in

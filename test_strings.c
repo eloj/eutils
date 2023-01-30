@@ -14,7 +14,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "macros-eddy.h"
+#include "emacros.h"
 #include "internal/tests.h"
 
 static int debug = 0;

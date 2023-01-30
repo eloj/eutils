@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "macros-eddy.h"
+#include "emacros.h"
 #include "internal/tests.h"
 
 static int test_MIN(void) {
