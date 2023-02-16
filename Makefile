@@ -37,11 +37,14 @@ LIBDIR ?= $(PREFIX)/lib
 INCLUDEDIR ?= $(PREFIX)/include
 PKGCONFIGDIR ?= $(LIBDIR)/pkgconfig
 
-all: test_macros test_strings
+all: tests
 
-test: test_macros test_strings
+tests: test_macros test_strings test_arrays
+
+test: tests
 	$(TEST_PREFIX) ./test_macros
 	$(TEST_PREFIX) ./test_strings
+	$(TEST_PREFIX) ./test_arrays
 
 test_macros: test_macros.c internal/tests.h emacros.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
@@ -49,11 +52,14 @@ test_macros: test_macros.c internal/tests.h emacros.h
 test_strings: test_strings.c internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
+test_arrays: test_arrays.c internal/tests.h
+	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
+
 .PHONY: clean backup cppcheck
 
 install: eutils.pc
 	@echo Installing headers \& pkgconfig
-	install -m 644 -D -t $(INCLUDEDIR)/eutils emacros.h estrings.h glhelpers.h
+	install -m 644 -D -t $(INCLUDEDIR)/eutils emacros.h estrings.h earrays.h glhelpers.h
 	install -m 644 eutils.pc $(PKGCONFIGDIR)
 
 eutils.pc: eutils.pc.in

@@ -26,7 +26,7 @@ size_t expand_escapes(const char *input, size_t slen, char *dest, size_t dlen, i
 
 size_t buf_printf(char *buf, size_t bufsize, size_t *wp, int *truncated, const char *format, ...);
 
-#ifdef UTILITY_IMPLEMENTATION
+#ifdef EUTILS_IMPLEMENTATION
 #include <assert.h>
 #include <ctype.h> // for isxdigit()
 #include <stdarg.h>
