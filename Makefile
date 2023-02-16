@@ -49,7 +49,7 @@ test_macros: test_macros.c internal/tests.h emacros.h
 test_strings: test_strings.c internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
-.PHONY: clean backup
+.PHONY: clean backup cppcheck
 
 install: eutils.pc
 	@echo Installing headers \& pkgconfig
@@ -63,6 +63,9 @@ eutils.pc: eutils.pc.in
 		-e 's|@VERSION@|$(LIBVER)|' \
 		-e 's|=${PREFIX}/|=$${prefix}/|' \
 	$< >$@
+
+cppcheck:
+	@cppcheck --verbose --error-exitcode=1 --enable=warning,performance,portability .
 
 backup:
 	@echo -e $(YELLOW)Making backup$(NC)
