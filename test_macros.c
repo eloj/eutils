@@ -49,21 +49,21 @@ static int test_LERP(void) {
 	TEST_START(LERP);
 	int res;
 
-	res = LERP(0, 256, 0.0f);
+	res = LERP(0, 255, 0.0f);
 	if (res != 0) {
-		TEST_ERRMSG("Unexpected error: LERP(0, 256, 0.0f) returned %d, expected 0", res);
+		TEST_ERRMSG("Unexpected error: LERP(0, 255, 0.0f) returned %d, expected 0", res);
 		++fails;
 	}
 
-	res = LERP(0, 256, 1.0f);
-	if (res != 256) {
-		TEST_ERRMSG("Unexpected error: LERP(0, 256, 1.0f) returned %d, expected 256", res);
+	res = LERP(0, 255, 1.0f);
+	if (res != 255) {
+		TEST_ERRMSG("Unexpected error: LERP(0, 255, 1.0f) returned %d, expected 255", res);
 		++fails;
 	}
 
-	res = LERP(0, 256, 0.5f);
-	if (res != 128) {
-		TEST_ERRMSG("Unexpected error: LERP(0, 256, 0.5f) returned %d, expected 128", res);
+	res = LERP(0, 255, 0.5f);
+	if (res != 127) {
+		TEST_ERRMSG("Unexpected error: LERP(0, 255, 0.5f) returned %d, expected 127", res);
 		++fails;
 	}
 
