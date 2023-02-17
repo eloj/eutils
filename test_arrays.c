@@ -56,6 +56,14 @@ static int test_simple_rotate(void) {
 	fails += CHECK_ROT(3,4,5,6,7,8,1,2);
 	rotate_array(arr, n, 6, rotate_int_array_cb, &ctx);
 	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
+	rotate_array(arr, n, n*3, rotate_int_array_cb, &ctx);
+	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
+	rotate_array(arr, n, -n*3, rotate_int_array_cb, &ctx);
+	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
+	rotate_array(arr, n, n+1, rotate_int_array_cb, &ctx);
+	fails += CHECK_ROT(2,3,4,5,6,7,8,1);
+	rotate_array(arr, n, -(n+1), rotate_int_array_cb, &ctx);
+	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
 
 	// Rotate inner portion of array, leaving first and last element intact.
 	rotate_array(arr + 1, n - 2, 1, rotate_int_array_cb, &ctx);

@@ -49,10 +49,10 @@ test: tests
 test_macros: test_macros.c internal/tests.h emacros.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
-test_strings: test_strings.c internal/tests.h
+test_strings: test_strings.c estrings.h internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
-test_arrays: test_arrays.c internal/tests.h
+test_arrays: test_arrays.c earrays.h internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
 
 .PHONY: clean backup cppcheck
