@@ -1,3 +1,4 @@
+#pragma once
 /*
 	Array Utility Functions
 	Copyright (c) 2023 Eddy L O Jansson. Licensed under The MIT License.
@@ -8,6 +9,32 @@
 extern "C" {
 #endif
 
+#include "emacros.h"
+
+#define reverse_array(arr, n) reverse_array_impl(arr, n, GENID(i), GENID(j))
+#define reverse_array_impl(arr, n, iID, jID) do { \
+	for (int iID=0, jID=((n)-1) ; iID < jID ; ++iID, --jID) \
+		SWAP((arr)[iID], (arr)[jID]); \
+} while(0)
+
+#define rotate_array(arr, n, dir) rotate_array_impl(arr, n, dir, GENID(d))
+#define rotate_array_impl(arr, n, dir, dID) do { \
+	if ((n) > 1) { \
+		int dID; \
+		if ((dir) < 0) { \
+			dID = (n) - (-(dir) % (n)); \
+		} else { \
+			dID = ((dir) % (n)); \
+		} \
+		if ((dID > 0) && (dID < (n))) { \
+			--dID; \
+			reverse_array((arr)		 , (dID)	); \
+			reverse_array((arr)+(dID), (n)-(dID)); \
+			reverse_array((arr)      , ((n)-1)  ); \
+		} \
+	} \
+} while(0)
+
 enum rotate_array_action {
 	ROT_ACTION_SAVE,
 	ROT_ACTION_RESTORE,
@@ -17,10 +44,35 @@ enum rotate_array_action {
 typedef void (*rot_cb)(void *arr, int src, int dst, enum rotate_array_action, void *ctx);
 
 /*
-	Can be used to rotate [part of] an array, and also to implement rotation/shifting of more complex
-	structures, such as a memory block.
+	Macro to generate rotate_array_cb() callbacks for trivial types.
 */
-void rotate_array(void *arr, int n, int d, rot_cb cb, void *ctx);
+#define GEN_ROTATE_ARRAY_CB(name, type) \
+static void name(void *arr, int src, int dst, enum rotate_array_action action, void *ctx) { \
+	type *tmp = ctx; \
+	type *typed_arr = arr; \
+	switch (action) { \
+		case ROT_ACTION_COPY: \
+			typed_arr[dst] = typed_arr[src]; \
+			break; \
+		case ROT_ACTION_SAVE: \
+			*tmp = typed_arr[src]; \
+			break; \
+		case ROT_ACTION_RESTORE: \
+			typed_arr[dst] = *tmp; \
+			break; \
+	} \
+}
+
+/*
+	Juggling/Dolphin Algorithm (Bentley, Programming Pearls)
+	See Also: "Swapping Sections" (TR 81-452), David Gries & Harlan Mills.
+
+	Can be used to rotate [part of] an array, and due to the callback-design,
+	also more complex structures, such as a whole memory block.
+
+	For something simpler, consider the '3-reverse' algorithm instead.
+*/
+void rotate_array_cb(void *arr, int n, int d, rot_cb cb, void *ctx);
 
 #ifdef EUTILS_IMPLEMENTATION
 #include <assert.h>
@@ -40,7 +92,7 @@ static int gcd(int a, int b) {
 	return a;
 }
 
-void rotate_array(void *arr, int n, int d, rot_cb cb, void *ctx) {
+void rotate_array_cb(void *arr, int n, int d, rot_cb cb, void *ctx) {
 	if (d == 0 || n == 0)
 		return;
 	if (d < 0) {

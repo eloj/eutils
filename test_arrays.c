@@ -16,67 +16,95 @@
 #define EUTILS_IMPLEMENTATION
 #include "earrays.h"
 
-#define GEN_ROTATE_ARRAY_CB(name, type) \
-static void name(void *arr, int src, int dst, enum rotate_array_action action, void *ctx) { \
-	type *tmp = ctx; \
-	type *typed_arr = arr; \
-	switch (action) { \
-		case ROT_ACTION_COPY: \
-			typed_arr[dst] = typed_arr[src]; \
-			break; \
-		case ROT_ACTION_SAVE: \
-			*tmp = typed_arr[src]; \
-			break; \
-		case ROT_ACTION_RESTORE: \
-			typed_arr[dst] = *tmp; \
-			break; \
-	} \
-}
-
-GEN_ROTATE_ARRAY_CB(rotate_int_array_cb, int)
-
-#define CHECK_ROT(...) memcmp(arr, (int[]){__VA_ARGS__}, sizeof(arr)) == 0 ? 0 : 1
-
-static int test_simple_rotate(void) {
-	TEST_START(simple_rotate);
+static int test_reverse_array(void) {
+	TEST_START(reverse_array);
 
 	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-	int n = sizeof(arr)/sizeof(arr[0]);
-	int ctx; // don't need complex context, use directly as temporary storage.
+	int n = ARRAY_SIZE(arr);
 
-	rotate_array(arr, n, -1, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(8,1,2,3,4,5,6,7);
-	rotate_array(arr, n, -1, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(7,8,1,2,3,4,5,6);
-	rotate_array(arr, n, -6, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
-	rotate_array(arr, n, 1, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(2,3,4,5,6,7,8,1);
-	rotate_array(arr, n, 1, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(3,4,5,6,7,8,1,2);
-	rotate_array(arr, n, 6, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
-	rotate_array(arr, n, n*3, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
-	rotate_array(arr, n, -n*3, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
-	rotate_array(arr, n, n+1, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(2,3,4,5,6,7,8,1);
-	rotate_array(arr, n, -(n+1), rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(1,2,3,4,5,6,7,8);
+	reverse_array(arr, n);
+	fails += CHECK_ARRAY(8,7,6,5,4,3,2,1);
 
-	// Rotate inner portion of array, leaving first and last element intact.
-	rotate_array(arr + 1, n - 2, 1, rotate_int_array_cb, &ctx);
-	fails += CHECK_ROT(1,3,4,5,6,7,2,8);
+	reverse_array(arr + 1, n - 3);
+	fails += CHECK_ARRAY(8,3,4,5,6,7,2,1);
 
 	TEST_END();
 }
-#undef CHECK_ROT
+
+struct tile_t {
+	int dummy;
+};
+
+GEN_ROTATE_ARRAY_CB(rotate_int_array_cb, int);
+GEN_ROTATE_ARRAY_CB(rotate_tile_array_cb, struct tile_t);
+
+static const struct re {
+	int offset;
+	int d;
+	int n;
+	int *input;
+	int *expected;
+} rotate_array_tests[] = {
+	{ 0,  -1, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){8,1,2,3,4,5,6,7} },
+	{ 0,  -1, 8, (int[]){8,1,2,3,4,5,6,7}, (int[]){7,8,1,2,3,4,5,6} },
+	{ 0,  -6, 8, (int[]){7,8,1,2,3,4,5,6}, (int[]){1,2,3,4,5,6,7,8} },
+	{ 0,   1, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){2,3,4,5,6,7,8,1} },
+	{ 0,   1, 8, (int[]){2,3,4,5,6,7,8,1}, (int[]){3,4,5,6,7,8,1,2} },
+	{ 0,   6, 8, (int[]){3,4,5,6,7,8,1,2}, (int[]){1,2,3,4,5,6,7,8} },
+	{ 0, 3*8, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){1,2,3,4,5,6,7,8} },
+	{ 0,-3*8, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){1,2,3,4,5,6,7,8} },
+	{ 0,   9, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){2,3,4,5,6,7,8,1} },
+	{ 0,  -9, 8, (int[]){2,3,4,5,6,7,8,1}, (int[]){1,2,3,4,5,6,7,8} },
+	{ 1,   1, 6, (int[]){1,2,3,4,5,6,7,8}, (int[]){1,3,4,5,6,7,2,8} },
+};
+
+static int test_rotate_array(void) {
+	TEST_START(rotate_array);
+
+	int arr[16];
+
+	for (size_t i = 0 ; i < ARRAY_SIZE(rotate_array_tests) ; ++i) {
+		const struct re re = rotate_array_tests[i];
+		size_t size = re.n * sizeof(re.input[0]);
+		assert(size <= sizeof(arr));
+		memcpy(arr, re.input, size);
+		rotate_array(arr + re.offset, re.n, re.d);
+		if (memcmp(arr, re.expected, size) != 0) {
+			fprintf(stderr, "test %zu failed\n", i);
+			++fails;
+		}
+	}
+
+	TEST_END();
+}
+
+static int test_rotate_array_cb(void) {
+	TEST_START(rotate_array_cb);
+
+	int arr[16];
+	int ctx; // don't need complex context, use directly as temporary storage.
+
+	for (size_t i = 0 ; i < ARRAY_SIZE(rotate_array_tests) ; ++i) {
+		const struct re re = rotate_array_tests[i];
+		size_t size = re.n * sizeof(re.input[0]);
+		assert(size <= sizeof(arr));
+		memcpy(arr, re.input, size);
+		rotate_array_cb(arr + re.offset, re.n, re.d, rotate_int_array_cb, &ctx);
+		if (memcmp(arr, re.expected, size) != 0) {
+			fprintf(stderr, "test %zu failed\n", i);
+			++fails;
+		}
+	}
+
+	TEST_END();
+}
 
 int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
-	failed += test_simple_rotate();
+	failed += test_reverse_array();
+	failed += test_rotate_array();
+	failed += test_rotate_array_cb();
 
 	if (failed != 0) {
 		printf("Tests " RED "FAILED" NC "\n");

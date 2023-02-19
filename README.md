@@ -31,7 +31,7 @@ $ make test
 
 You can copy and paste, curl or wget, or clone the repo to your heart's content.
 
-As an option, header(s) plus a `pkg-config` configuration can be installed:
+As an option, headers plus a `pkg-config` configuration can be installed:
 
 ```bash
 $ PREFIX=$HOME/local make -B install

@@ -23,6 +23,10 @@
 #define SWAP(a, b) do { __auto_type T = (a); a = b; b = T; } while (0)
 #endif
 
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
+#endif
+
 #ifndef UNUSED
 #define UNUSED(x) (x) __attribute__((unused))
 #endif
