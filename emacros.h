@@ -7,6 +7,7 @@
 */
 
 // TODO: For c23, replace '__auto_type' with 'auto', '__typeof__ with 'typeof'(?)
+// TODO: For c23, replace '_Static_assert' with 'static_assert'
 
 #ifndef STRINGIFY
 #define STRINGIFY_INTERNAL(x) #x
