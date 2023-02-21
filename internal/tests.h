@@ -16,9 +16,12 @@
 	if (fails == 0) { \
 		printf("Suite '%s' ... " GREEN "PASS" NC "\n", testname); \
 	} else { \
-		printf("Suite '%s' ... " RED "FAIL" NC "\n", testname); \
+		printf("Suite '%s' ... " RED "%d FAIL" NC "\n", testname, fails); \
 	} \
 	return fails;
+
+#define CHECK_ARRAY(...) \
+	((sizeof(arr) == sizeof(__typeof__(arr[0])[]){__VA_ARGS__}) && memcmp(arr, (__typeof__(arr[0])[]){__VA_ARGS__}, sizeof(arr)) == 0) ? 0 : 1
 
 // This is very special and only for these tests.
 // Returns 0 if bit-pattern equal, else 1.

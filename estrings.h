@@ -1,3 +1,4 @@
+#pragma once
 /*
 	String and String Buffer Utility Functions
 	Copyright (c) 2022, 2023 Eddy L O Jansson. Licensed under The MIT License.
