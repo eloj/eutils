@@ -2,7 +2,7 @@ prefix=@PREFIX@
 includedir=@INCLUDEDIR@
 
 Name: eutils
-Description: Utility Macros (C11+)
-Version: @VERSION@
+Description: Eddy's C11+ Standalone Utility Functions & Macros
+Version: @VERSION@-g@GIT_HASH@
 URL: https://github.com/eloj/eutils
 Cflags: -I${includedir}

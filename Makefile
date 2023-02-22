@@ -62,11 +62,13 @@ install: eutils.pc
 	install -m 644 -D -t $(INCLUDEDIR)/eutils emacros.h estrings.h earrays.h glhelpers.h
 	install -m 644 eutils.pc $(PKGCONFIGDIR)
 
+eutils.ps: $(eval GIT_HASH=$(shell git show-ref --head --hash=8 | head -n 1))
 eutils.pc: eutils.pc.in
-	@echo Creating pkgconfig for $(LIBVER)
+	@echo "Creating pkgconfig for version $(LIBVER)-g$(GIT_HASH)"
 	@sed -E -e 's|@PREFIX@|$(PREFIX)|' \
 		-e 's|@INCLUDEDIR@|$(INCLUDEDIR)/eutils|' \
 		-e 's|@VERSION@|$(LIBVER)|' \
+		-e 's|@GIT_HASH@|$(GIT_HASH)|' \
 		-e 's|=${PREFIX}/|=$${prefix}/|' \
 	$< >$@
 
