@@ -23,14 +23,17 @@ extern "C" {
 #define sort_array(arr, n) sort_array_simple_impl(arr, n, SORT_ARRAY_CMP_GT, GENID(j), GENID(x))
 #define sort_array_cmp(arr, n, cmp) sort_array_simple_impl(arr, n, cmp, GENID(j), GENID(x))
 #define sort_array_simple_impl(arr, n, cmp, j, x) do { \
+	_Pragma("GCC diagnostic push") \
+	_Pragma("GCC diagnostic ignored \"-Wtype-limits\"") \
 	size_t j; \
 	for (size_t i = 1 ; i < (n) ; ++i) { \
 		__auto_type x = (arr)[i]; \
-		for (j = i ; (j > 0 && cmp(((arr)[j-1]),(x))) ; --j) { \
+		for (j = i ; (j > 0 && cmp(((arr)[j-1]),x)) ; --j) { \
 			(arr)[j] = (arr)[j-1]; \
 		} \
 		(arr)[j] = x; \
 	} \
+	_Pragma("GCC diagnostic pop") \
 } while(0)
 
 #define rotate_array(arr, n, dir) rotate_array_impl(arr, n, dir, GENID(d))

@@ -27,6 +27,9 @@ static int test_reverse_array(void) {
 	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 	int n = ARRAY_SIZE(arr);
 
+	reverse_array(arr, 0);
+	reverse_array(arr, 1);
+
 	reverse_array(arr, n);
 	fails += CHECK_ARRAY(arr, 8,7,6,5,4,3,2,1);
 
@@ -40,6 +43,9 @@ static int test_sort_array(void) {
 	TEST_START(sort_array);
 
 	int arri[] = { 5,6,7,8,1,2,3,4,-123 };
+
+	sort_array(arri, 0); // Potentially raises -Wtype-limits warning because size_t can't be less than zero.
+	sort_array(arri, 1);
 
 	sort_array(arri, ARRAY_SIZE(arri));
 	fails += CHECK_ARRAY(arri, -123, 1, 2, 3, 4, 5, 6, 7, 8);
@@ -74,6 +80,7 @@ static const struct re {
 	int *input;
 	int *expected;
 } rotate_array_tests[] = {
+	{ 0,   0, 0, (int[]){}, (int[]){} },
 	{ 0,  -1, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){8,1,2,3,4,5,6,7} },
 	{ 0,  -1, 8, (int[]){8,1,2,3,4,5,6,7}, (int[]){7,8,1,2,3,4,5,6} },
 	{ 0,  -6, 8, (int[]){7,8,1,2,3,4,5,6}, (int[]){1,2,3,4,5,6,7,8} },
