@@ -12,9 +12,25 @@ extern "C" {
 #include "emacros.h"
 
 #define reverse_array(arr, n) reverse_array_impl(arr, n, GENID(i), GENID(j))
-#define reverse_array_impl(arr, n, iID, jID) do { \
-	for (int iID=0, jID=((n)-1) ; iID < jID ; ++iID, --jID) \
-		SWAP((arr)[iID], (arr)[jID]); \
+#define reverse_array_impl(arr, n, i, j) do { \
+	for (int i=0, j=((n)-1) ; i < j ; ++i, --j) \
+		SWAP((arr)[i], (arr)[j]); \
+} while(0)
+
+// Insertion sort any simple-valued array in ascending order
+#define SORT_ARRAY_CMP_GT(a,b) ((a) > (b))
+#define SORT_ARRAY_CMP_LT(a,b) ((a) < (b))
+#define sort_array(arr, n) sort_array_simple_impl(arr, n, SORT_ARRAY_CMP_GT, GENID(j), GENID(x))
+#define sort_array_cmp(arr, n, cmp) sort_array_simple_impl(arr, n, cmp, GENID(j), GENID(x))
+#define sort_array_simple_impl(arr, n, cmp, j, x) do { \
+	size_t j; \
+	for (size_t i = 1 ; i < (n) ; ++i) { \
+		__auto_type x = (arr)[i]; \
+		for (j = i ; (j > 0 && cmp(((arr)[j-1]),(x))) ; --j) { \
+			(arr)[j] = (arr)[j-1]; \
+		} \
+		(arr)[j] = x; \
+	} \
 } while(0)
 
 #define rotate_array(arr, n, dir) rotate_array_impl(arr, n, dir, GENID(d))
