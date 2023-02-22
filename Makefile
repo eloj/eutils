@@ -79,4 +79,4 @@ backup:
 
 clean:
 	@echo -e $(YELLOW)Cleaning$(NC)
-	rm -f test_macros test_strings *.o core core.* eutils.pc
+	rm -f test_macros test_strings test_arrays *.o core core.* eutils.pc
