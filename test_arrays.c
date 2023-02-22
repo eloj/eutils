@@ -16,24 +16,59 @@
 #define EUTILS_IMPLEMENTATION
 #include "earrays.h"
 
+struct tile_t {
+	int dummy;
+	char x;
+};
+
 static int test_reverse_array(void) {
 	TEST_START(reverse_array);
 
 	int arr[] = { 1, 2, 3, 4, 5, 6, 7, 8 };
 	int n = ARRAY_SIZE(arr);
 
+	reverse_array(arr, 0);
+	reverse_array(arr, 1);
+
 	reverse_array(arr, n);
-	fails += CHECK_ARRAY(8,7,6,5,4,3,2,1);
+	fails += CHECK_ARRAY(arr, 8,7,6,5,4,3,2,1);
 
 	reverse_array(arr + 1, n - 3);
-	fails += CHECK_ARRAY(8,3,4,5,6,7,2,1);
+	fails += CHECK_ARRAY(arr, 8,3,4,5,6,7,2,1);
 
 	TEST_END();
 }
 
-struct tile_t {
-	int dummy;
-};
+static int test_sort_array(void) {
+	TEST_START(sort_array);
+
+	int arri[] = { 5,6,7,8,1,2,3,4,-123 };
+
+	sort_array(arri, 0); // Potentially raises -Wtype-limits warning because size_t can't be less than zero.
+	sort_array(arri, 1);
+
+	sort_array(arri, ARRAY_SIZE(arri));
+	fails += CHECK_ARRAY(arri, -123, 1, 2, 3, 4, 5, 6, 7, 8);
+
+	sort_array_cmp(arri, ARRAY_SIZE(arri), SORT_ARRAY_CMP_LT);
+	fails += CHECK_ARRAY(arri, 8, 7, 6, 5, 4, 3, 2, 1, -123);
+
+	char arrc[] = { 'h', 'e', 'x', 'a' };
+	sort_array(arrc, ARRAY_SIZE(arrc));
+	fails += CHECK_ARRAY(arrc, 'a', 'e', 'h', 'x');
+
+	struct tile_t tile_arr[] = { {65,'B'}, {4,'A'}, {40,'X'}, {128,'@'}};
+#define tile_cmp(a,b) (a.x > b.x)
+	sort_array_cmp(tile_arr, ARRAY_SIZE(tile_arr), tile_cmp);
+#undef tile_cmp
+
+	fails += tile_arr[0].x != '@';
+	fails += tile_arr[1].x != 'A';
+	fails += tile_arr[2].x != 'B';
+	fails += tile_arr[3].x != 'X';
+
+	TEST_END();
+}
 
 GEN_ROTATE_ARRAY_CB(rotate_int_array_cb, int);
 GEN_ROTATE_ARRAY_CB(rotate_tile_array_cb, struct tile_t);
@@ -45,6 +80,7 @@ static const struct re {
 	int *input;
 	int *expected;
 } rotate_array_tests[] = {
+	{ 0,   0, 0, (int[]){}, (int[]){} },
 	{ 0,  -1, 8, (int[]){1,2,3,4,5,6,7,8}, (int[]){8,1,2,3,4,5,6,7} },
 	{ 0,  -1, 8, (int[]){8,1,2,3,4,5,6,7}, (int[]){7,8,1,2,3,4,5,6} },
 	{ 0,  -6, 8, (int[]){7,8,1,2,3,4,5,6}, (int[]){1,2,3,4,5,6,7,8} },
@@ -103,6 +139,7 @@ int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
 	failed += test_reverse_array();
+	failed += test_sort_array();
 	failed += test_rotate_array();
 	failed += test_rotate_array_cb();
 

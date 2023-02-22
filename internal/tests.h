@@ -20,8 +20,9 @@
 	} \
 	return fails;
 
-#define CHECK_ARRAY(...) \
-	((sizeof(arr) == sizeof(__typeof__(arr[0])[]){__VA_ARGS__}) && memcmp(arr, (__typeof__(arr[0])[]){__VA_ARGS__}, sizeof(arr)) == 0) ? 0 : 1
+// NOTE: Unsafe to use on arrays of structs that may contain padding. Beware.
+#define CHECK_ARRAY(arr, ...) \
+	((sizeof(arr) == sizeof(__typeof__(arr[0])[]){__VA_ARGS__}) && memcmp((arr), (__typeof__((arr)[0])[]){__VA_ARGS__}, sizeof(arr)) == 0) ? 0 : 1
 
 // This is very special and only for these tests.
 // Returns 0 if bit-pattern equal, else 1.
