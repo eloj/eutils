@@ -147,11 +147,40 @@ static int test_buf_printf(void) {
 	TEST_END();
 }
 
+static int test_read_entire_file(void) {
+	TEST_START(read_entire_file);
+
+	size_t len = 0;
+	char *str = read_entire_file("LICENSE", &len);
+	if (str) {
+		if (len != strlen(str)) {
+			TEST_ERRMSG("File size returned doesn't match strlen");
+			++fails;
+		}
+		size_t expected_len = 1079;
+		if (len != expected_len) {
+			TEST_ERRMSG("LICENSE file size mismatch, got '%zu', expected %zu", len, expected_len);
+			++fails;
+		}
+		if (strstr(str, "SOFTWARE.") == NULL) {
+			TEST_ERRMSG("LICENSE file contents mismatch.");
+			++fails;
+		}
+		free(str);
+	} else {
+		TEST_ERRMSG("Reading LICENSE failed");
+		++fails;
+	}
+
+	TEST_END();
+}
+
 int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
 	failed += test_expand_escapes();
 	failed += test_buf_printf();
+	failed += test_read_entire_file(); // Requires 'LICENSE' file to be available in current directory.
 
 	if (failed != 0) {
 		printf("Tests " RED "FAILED" NC "\n");

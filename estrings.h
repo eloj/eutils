@@ -27,6 +27,8 @@ size_t expand_escapes(const char *input, size_t slen, char *dest, size_t dlen, i
 
 size_t buf_printf(char *buf, size_t bufsize, size_t *wp, int *truncated, const char *format, ...);
 
+char *read_entire_file(const char *filename, size_t *len);
+
 #ifdef EUTILS_IMPLEMENTATION
 #include <assert.h>
 #include <ctype.h> // for isxdigit()
@@ -171,6 +173,44 @@ size_t buf_printf(char *buf, size_t bufsize, size_t *wp, int *truncated, const c
 }
 
 #endif
+
+static_assert(sizeof(size_t) >= sizeof(long)); // Never truncate ftell. PS. You have a weird platform.
+
+char *read_entire_file(const char *filename, size_t *len) {
+	FILE *f = fopen(filename, "rb");
+
+	if (!f)
+		return NULL;
+
+	fseek(f, 0, SEEK_END);
+	long bytes = ftell(f);
+	if (bytes < 0) {
+		fclose(f);
+		return NULL;
+	}
+	rewind(f);
+
+	char *buf = malloc(bytes + 1);
+	if (!buf) {
+		fclose(f);
+		return NULL;
+	}
+
+	size_t rnum = fread(buf, bytes, 1, f);
+	fclose(f);
+
+	if (bytes && rnum != 1) {
+		free(buf);
+		return NULL;
+	}
+
+	buf[bytes] = 0; // always zero-terminate.
+
+	if (len)
+		*len = bytes;
+
+	return buf;
+}
 
 #ifdef __cplusplus
 }

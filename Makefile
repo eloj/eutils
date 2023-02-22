@@ -37,14 +37,17 @@ LIBDIR ?= $(PREFIX)/lib
 INCLUDEDIR ?= $(PREFIX)/include
 PKGCONFIGDIR ?= $(LIBDIR)/pkgconfig
 
+.PHONY: clean test install backup cppcheck
+
 all: tests
 
 tests: test_macros test_strings test_arrays
 
-test: tests
-	$(TEST_PREFIX) ./test_macros
-	$(TEST_PREFIX) ./test_strings
-	$(TEST_PREFIX) ./test_arrays
+test: tests test-macros test-strings test-arrays
+
+test-%:
+	@echo -e $(YELLOW)Running test suite '$*'$(NC)
+	$(TEST_PREFIX) ./test_$*
 
 test_macros: test_macros.c internal/tests.h emacros.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
@@ -54,8 +57,6 @@ test_strings: test_strings.c estrings.h internal/tests.h
 
 test_arrays: test_arrays.c earrays.h internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
-
-.PHONY: clean backup cppcheck
 
 install: eutils.pc
 	@echo Installing headers \& pkgconfig
