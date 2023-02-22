@@ -29,6 +29,9 @@ size_t buf_printf(char *buf, size_t bufsize, size_t *wp, int *truncated, const c
 
 char *read_entire_file(const char *filename, size_t *len);
 
+char** generate_cstr_ptrs(char *data, size_t len, const char *delims, size_t *count);
+const char** generate_delim_ptrs(const char *data, size_t len, const char delim, size_t *count);
+
 #ifdef EUTILS_IMPLEMENTATION
 #include <assert.h>
 #include <ctype.h> // for isxdigit()
@@ -210,6 +213,97 @@ char *read_entire_file(const char *filename, size_t *len) {
 		*len = bytes;
 
 	return buf;
+}
+
+char** generate_cstr_ptrs(char *data, size_t len, const char *delims, size_t *count) {
+	size_t j = 0;
+	size_t entries = 0;
+	char *p = data;
+	char *b = data; // points to beginning of entry
+	char *end = data + len;
+	char **strs = NULL;
+
+	if (!data || len == 0)
+		goto leave;
+
+	while (p < end) {
+		if (*p == '\0'|| strchr(delims, *p)) {
+			++entries;
+		}
+		++p;
+	}
+
+	// Basic overflow check, but callers should make sure to not call with unreasonably-sized buffers anyway.
+	if (!__builtin_mul_overflow(entries, sizeof(char*), &j)) {
+		strs = malloc(j);
+	}
+	j = 0;
+	if (!strs)
+		goto leave;
+
+	p = data;
+	while (p < end) {
+		if (*p == '\0'|| strchr(delims, *p)) {
+			assert(j < entries);
+			strs[j++] = b;
+			b = p + 1;
+			*p = '\0';
+		}
+		++p;
+	}
+	assert(j == entries);
+
+leave:
+	if (count)
+		*count = j;
+
+	return strs;
+}
+
+const char** generate_delim_ptrs(const char *data, size_t len, const char delim, size_t *count) {
+	size_t j = 0;
+	size_t entries = 0;
+	const char *p = data;
+	const char *b = data; // points to beginning of entry
+	const char *end = data + len;
+	const char **strs = NULL;
+
+	if (!data || len == 0)
+		goto leave;
+
+	while (p < end) {
+		if (*p == delim) {
+			++entries;
+		}
+		++p;
+	}
+
+	// +2 for end-of-buffer sentinels
+	if (!__builtin_mul_overflow(entries, sizeof(char*), &j) && !__builtin_add_overflow(j, 2, &j)) {
+		strs = malloc(j);
+	}
+	j = 0;
+	if (!strs)
+		goto leave;
+
+	p = data;
+	while (p < end) {
+		if (*p == delim) {
+			assert(j < entries);
+			strs[j++] = b;
+			b = p + 1;
+		}
+		++p;
+	}
+	strs[j++] = b; // handle input with no delimiter at end
+	strs[j] = b; // true length sentinel, not counted.
+	assert(j < entries + 2);
+
+leave:
+	if (count)
+		*count = j;
+
+	return strs;
 }
 
 #ifdef __cplusplus

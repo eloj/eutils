@@ -175,12 +175,107 @@ static int test_read_entire_file(void) {
 	TEST_END();
 }
 
+static int test_generate_cstr_ptrs(void) {
+	TEST_START(generate_cstr_ptrs);
+
+	char text1[] = "The";
+	char text2[] = "The quick ";
+	char text3[] = "The\nquick\nbrown\nfox\njumps\nover\nthe\nlazy\ndog\n";
+
+	size_t entries = 0;
+	char** str_ptrs = generate_cstr_ptrs(text1, strlen(text1), " ", &entries);
+	free(str_ptrs);
+
+	if (entries != 0) {
+		TEST_ERRMSG("Expected zero entries, got %zu", entries);
+		++fails;
+	}
+
+	str_ptrs = generate_cstr_ptrs(text1, strlen(text1)+1, " ", &entries);
+	free(str_ptrs);
+
+	if (entries != 1) {
+		TEST_ERRMSG("Expected 1 entry, got %zu", entries);
+		++fails;
+	}
+
+	str_ptrs = generate_cstr_ptrs(text2, strlen(text2), " ", &entries);
+	if (entries != 2) {
+		TEST_ERRMSG("Expected 2 entries, got %zu", entries);
+		++fails;
+	}
+	free(str_ptrs);
+
+	str_ptrs = generate_cstr_ptrs(text3, strlen(text3), "\n", &entries);
+	if (entries != 9) {
+		TEST_ERRMSG("Expected 9 entries, got %zu", entries);
+		++fails;
+	}
+
+	if (strcmp(str_ptrs[8], "dog") != 0) {
+		TEST_ERRMSG("Expected [8]='dog', got %s", str_ptrs[8]);
+		++fails;
+	}
+
+	free(str_ptrs);
+
+	TEST_END();
+}
+
+static int test_generate_delim_ptrs(void) {
+	TEST_START(generate_delim_ptrs);
+
+	const char* text = "The";
+	const char* text2= "The quick ";
+	const char* text3= "The\nquick\nbrown\nfox\njumps\nover\nthe\nlazy\ndog\n";
+
+	size_t entries = 0;
+	const char** str_ptrs = generate_delim_ptrs(text, strlen(text), ' ', &entries);
+
+	if (entries != 1) {
+		TEST_ERRMSG("Expected 1 entry, got %zu", entries);
+		++fails;
+	}
+
+	size_t wlen = str_ptrs[1] - str_ptrs[0];
+	if (strncmp(str_ptrs[0], "The", wlen - 1) != 0) {
+		TEST_ERRMSG("Expected 'The', got '%.*s'", (int)wlen-1, str_ptrs[0]);
+		++fails;
+	}
+	free(str_ptrs);
+
+	str_ptrs = generate_delim_ptrs(text2, strlen(text2), ' ', &entries);
+	if (entries != 3) {
+		TEST_ERRMSG("Expected 3 entries, got %zu", entries);
+		++fails;
+	}
+	free(str_ptrs);
+
+	str_ptrs = generate_delim_ptrs(text3, strlen(text3), '\n', &entries);
+	if (entries != 10) {
+		TEST_ERRMSG("Expected 10 entries, got %zu", entries);
+		++fails;
+	}
+	free(str_ptrs);
+
+#if 0
+	for (size_t i = 0 ; i < words ; ++i) {
+		size_t len = str_ptrs[i+1] - str_ptrs[i];
+		printf("[%03zu]=%.*s\n", i, (int)len-1, str_ptrs[i]);
+	}
+#endif
+
+	TEST_END();
+}
+
 int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
 	failed += test_expand_escapes();
 	failed += test_buf_printf();
 	failed += test_read_entire_file(); // Requires 'LICENSE' file to be available in current directory.
+	failed += test_generate_cstr_ptrs();
+	failed += test_generate_delim_ptrs();
 
 	if (failed != 0) {
 		printf("Tests " RED "FAILED" NC "\n");
