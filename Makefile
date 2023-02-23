@@ -43,11 +43,18 @@ LIBDIR ?= $(PREFIX)/lib
 INCLUDEDIR ?= $(PREFIX)/include
 PKGCONFIGDIR ?= $(LIBDIR)/pkgconfig
 
+TESTS_SRC := $(wildcard test_*.c)
+TESTS_BIN := $(TESTS_SRC:.c=)
+
+EXAMPLES_SRC := $(wildcard examples/*.c)
+EXAMPLES_BIN := $(subst /,_,$(EXAMPLES_SRC:.c=))
+
 .PHONY: clean test install backup cppcheck
 
-all: tests
+all: tests examples
 
-tests: test_macros test_strings test_arrays
+tests: $(TESTS_BIN)
+examples: $(EXAMPLES_BIN)
 
 test: tests test-macros test-strings test-arrays
 
@@ -63,6 +70,12 @@ test_strings: test_strings.c estrings.h internal/tests.h
 
 test_arrays: test_arrays.c earrays.h internal/tests.h
 	$(CC) $(CFLAGS) $< -o $@ $(filter %.o, $^)
+
+examples_generate_cstr_ptrs: examples/generate_cstr_ptrs.c emacros.h estrings.h
+	$(CC) $(CFLAGS) -I. $< -o $@
+
+examples_generate_delim_ptrs: examples/generate_delim_ptrs.c emacros.h estrings.h
+	$(CC) $(CFLAGS) -I. $< -o $@
 
 install: eutils.pc
 	@echo Installing headers \& pkgconfig
@@ -88,4 +101,4 @@ backup:
 
 clean:
 	@echo -e $(YELLOW)Cleaning$(NC)
-	rm -f test_macros test_strings test_arrays *.o core core.* eutils.pc
+	rm -f $(TESTS_BIN) $(EXAMPLES_BIN) *.o core core.* eutils.pc

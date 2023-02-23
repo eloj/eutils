@@ -32,6 +32,12 @@ $ pkg-config --cflags eutils
 
 ## Building
 
+Build the examples with:
+
+```bash
+$ make examples
+```
+
 Run all tests with:
 
 ```bash
