@@ -20,6 +20,8 @@ extern "C" {
 // Insertion sort any simple-valued array in ascending order
 #define SORT_ARRAY_CMP_GT(a,b) ((a) > (b))
 #define SORT_ARRAY_CMP_LT(a,b) ((a) < (b))
+#define SORT_ARRAY_CMP_CSTR_ASC(s1, s2) (strcmp((s1), (s2)) > 0)
+#define SORT_ARRAY_CMP_CSTR_DESC(s1, s2) (strcmp((s1), (s2)) < 0)
 #define sort_array(arr, n) sort_array_simple_impl(arr, n, SORT_ARRAY_CMP_GT, GENID(j), GENID(x))
 #define sort_array_cmp(arr, n, cmp) sort_array_simple_impl(arr, n, cmp, GENID(j), GENID(x))
 #define sort_array_simple_impl(arr, n, cmp, j, x) do { \

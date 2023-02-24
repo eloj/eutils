@@ -67,6 +67,15 @@ static int test_sort_array(void) {
 	fails += tile_arr[2].x != 'B';
 	fails += tile_arr[3].x != 'X';
 
+	const char *names[] = { "emma", "amanda", "julie", "ellie", "sarah", "emma" };
+	const char *names_expected[] = { "amanda", "ellie", "emma", "emma", "julie", "sarah" };
+
+	sort_array_cmp(names, ARRAY_SIZE(names), SORT_ARRAY_CMP_CSTR_ASC);
+
+	for (size_t i = 0 ; i < ARRAY_SIZE(names) ; ++i) {
+		fails += strcmp(names[i], names_expected[i]) == 0 ? 0 : 1;
+	}
+
 	TEST_END();
 }
 
