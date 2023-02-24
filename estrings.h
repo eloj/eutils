@@ -174,7 +174,7 @@ size_t buf_printf(char *buf, size_t bufsize, size_t *wp, int *truncated, const c
 
 #endif
 
-static_assert(sizeof(size_t) >= sizeof(long)); // Never truncate ftell. PS. You have a weird platform.
+static_assert(sizeof(size_t) >= sizeof(long), "size_t < long"); // Never truncate ftell. PS. You have a weird platform.
 
 char *read_entire_file(const char *filename, size_t *len) {
 	FILE *f = fopen(filename, "rb");

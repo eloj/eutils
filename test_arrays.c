@@ -106,7 +106,7 @@ static const struct re {
 static int test_rotate_array(void) {
 	TEST_START(rotate_array);
 
-	int arr[16];
+	int arr[16] = { 0 };
 
 	for (size_t i = 0 ; i < ARRAY_SIZE(rotate_array_tests) ; ++i) {
 		const struct re re = rotate_array_tests[i];
@@ -126,7 +126,7 @@ static int test_rotate_array(void) {
 static int test_rotate_array_cb(void) {
 	TEST_START(rotate_array_cb);
 
-	int arr[16];
+	int arr[16] = { 0 };
 	int ctx; // don't need complex context, use directly as temporary storage.
 
 	for (size_t i = 0 ; i < ARRAY_SIZE(rotate_array_tests) ; ++i) {
