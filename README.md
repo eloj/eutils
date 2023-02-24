@@ -6,7 +6,7 @@ A collection of standalone C11+ functions and macros.
 
 I don't expect anyone else to use any of this, but you're welcome to it if you want.
 
-If you learn or use something from this repo, give it a star. Cost nothing.
+If you learn or use something from this repo, give it a star. Costs nothing.
 
 ## Caveat Emptor
 
@@ -16,16 +16,6 @@ you are in the wrong place.
 
 I don't provide _any_ guarentees whatsoever about this code. I may rename files,
 change interfaces, rebase master and so on, at any point in time.
-
-## Building
-
-There's currently nothing to build, it's just headers.
-
-Run tests with:
-
-```bash
-$ make test
-```
 
 ## Installation
 
@@ -38,6 +28,20 @@ $ PREFIX=$HOME/local make -B install
 ...
 $ pkg-config --cflags eutils
 -I/home/user/local/include/eutils
+```
+
+## Building
+
+Run all tests with:
+
+```bash
+$ make test
+```
+
+Running a specific test suite under valgrind:
+
+```bash
+$ MEMCHECK=1 make test-strings
 ```
 
 ## License
