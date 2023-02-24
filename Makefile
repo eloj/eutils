@@ -61,7 +61,7 @@ test_arrays: test_arrays.c earrays.h internal/tests.h
 install: eutils.pc
 	@echo Installing headers \& pkgconfig
 	install -m 644 -D -t $(INCLUDEDIR)/eutils emacros.h estrings.h earrays.h glhelpers.h
-	install -m 644 eutils.pc $(PKGCONFIGDIR)
+	install -m 644 -D -t $(PKGCONFIGDIR) eutils.pc
 
 eutils.ps: $(eval GIT_HASH=$(shell git show-ref --head --hash=8 | head -n 1))
 eutils.pc: eutils.pc.in
