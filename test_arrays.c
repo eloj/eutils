@@ -42,23 +42,23 @@ static int test_reverse_array(void) {
 static int test_sort_array(void) {
 	TEST_START(sort_array);
 
-	int arri[] = { 5,6,7,8,1,2,3,4,-123 };
+	int arri[] = { 5,6,7,8,1,2,3,4,-123,5 };
 
 	sort_array(arri, 0); // Potentially raises -Wtype-limits warning because size_t can't be less than zero.
 	sort_array(arri, 1);
 
 	sort_array(arri, ARRAY_SIZE(arri));
-	fails += CHECK_ARRAY(arri, -123, 1, 2, 3, 4, 5, 6, 7, 8);
+	fails += CHECK_ARRAY(arri, -123, 1, 2, 3, 4, 5, 5, 6, 7, 8);
 
 	sort_array_cmp(arri, ARRAY_SIZE(arri), SORT_ARRAY_CMP_LT);
-	fails += CHECK_ARRAY(arri, 8, 7, 6, 5, 4, 3, 2, 1, -123);
+	fails += CHECK_ARRAY(arri, 8, 7, 6, 5, 5, 4, 3, 2, 1, -123);
 
 	char arrc[] = { 'h', 'e', 'x', 'a' };
 	sort_array(arrc, ARRAY_SIZE(arrc));
 	fails += CHECK_ARRAY(arrc, 'a', 'e', 'h', 'x');
 
 	struct tile_t tile_arr[] = { {65,'B'}, {4,'A'}, {40,'X'}, {128,'@'}};
-#define tile_cmp(a,b) (a.x > b.x)
+#define tile_cmp(a,b,data) (a.x > b.x)
 	sort_array_cmp(tile_arr, ARRAY_SIZE(tile_arr), tile_cmp);
 #undef tile_cmp
 
@@ -78,6 +78,38 @@ static int test_sort_array(void) {
 
 	TEST_END();
 }
+
+static int test_sort_array_cmp_data(void) {
+	TEST_START(sort_array_cmp_data);
+
+	const int arr[] = { 42, 3, -1, 0, 0, 512, 1, 128, 2, 0 };
+	const int N = ARRAY_SIZE(arr);
+	int perm[N];
+
+	// Generate permutation sequence 0, 1, 2, ... N
+	for (size_t i = 0 ; i < N ; ++i) {
+		perm[i] = i;
+	}
+
+	// Permute the sequence to represent the ascending sorted order over 'arr'
+	sort_array_cmp_data(perm, N, SORT_ARRAY_CMP_PERM_GT, arr);
+
+	fails += CHECK_ARRAY(perm, 2, 3, 4, 9, 6, 8, 1, 0, 7, 5);
+
+	fails += arr[perm[0]] != -1;
+	fails += arr[perm[1]] != 0;
+	fails += arr[perm[2]] != 0;
+	fails += arr[perm[3]] != 0;
+	fails += arr[perm[4]] != 1;
+	fails += arr[perm[5]] != 2;
+	fails += arr[perm[6]] != 3;
+	fails += arr[perm[7]] != 42;
+	fails += arr[perm[8]] != 128;
+	fails += arr[perm[9]] != 512;
+
+	TEST_END();
+}
+
 
 GEN_ROTATE_ARRAY_CB(rotate_int_array_cb, int);
 GEN_ROTATE_ARRAY_CB(rotate_tile_array_cb, struct tile_t);
@@ -149,6 +181,7 @@ int main(int UNUSED(argc), char UNUSED(*argv[])) {
 
 	failed += test_reverse_array();
 	failed += test_sort_array();
+	failed += test_sort_array_cmp_data();
 	failed += test_rotate_array();
 	failed += test_rotate_array_cb();
 

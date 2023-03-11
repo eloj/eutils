@@ -18,19 +18,23 @@ extern "C" {
 } while(0)
 
 // Insertion sort any simple-valued array in ascending order
-#define SORT_ARRAY_CMP_GT(a,b) ((a) > (b))
-#define SORT_ARRAY_CMP_LT(a,b) ((a) < (b))
-#define SORT_ARRAY_CMP_CSTR_ASC(s1, s2) (strcmp((s1), (s2)) > 0)
-#define SORT_ARRAY_CMP_CSTR_DESC(s1, s2) (strcmp((s1), (s2)) < 0)
-#define sort_array(arr, n) sort_array_simple_impl(arr, n, SORT_ARRAY_CMP_GT, GENID(j), GENID(x))
-#define sort_array_cmp(arr, n, cmp) sort_array_simple_impl(arr, n, cmp, GENID(j), GENID(x))
-#define sort_array_simple_impl(arr, n, cmp, j, x) do { \
+#define SORT_ARRAY_CMP_GT(a,b,cmp_data) ((a) > (b))
+#define SORT_ARRAY_CMP_LT(a,b,cmp_data) ((a) < (b))
+#define SORT_ARRAY_CMP_CSTR_ASC(s1,s2,cmp_data) (strcmp((s1), (s2)) > 0)
+#define SORT_ARRAY_CMP_CSTR_DESC(s1,s2,cmp_data) (strcmp((s1), (s2)) < 0)
+#define SORT_ARRAY_CMP_PERM_GT(a,b,cmp_data) ((cmp_data)[a] > (cmp_data)[b])
+#define SORT_ARRAY_CMP_PERM_LT(a,b,cmp_data) ((cmp_data)[a] < (cmp_data)[b])
+
+#define sort_array(arr, n) sort_array_simple_impl(arr, n, SORT_ARRAY_CMP_GT, NULL, GENID(j), GENID(x))
+#define sort_array_cmp(arr, n, cmp) sort_array_simple_impl(arr, n, cmp, NULL, GENID(j), GENID(x))
+#define sort_array_cmp_data(arr, n, cmp, cmp_data) sort_array_simple_impl(arr, n, cmp, cmp_data, GENID(j), GENID(x))
+#define sort_array_simple_impl(arr, n, cmp, cmp_data, j, x) do { \
 	_Pragma("GCC diagnostic push") \
 	_Pragma("GCC diagnostic ignored \"-Wtype-limits\"") \
 	size_t j; \
 	for (size_t i = 1 ; i < (n) ; ++i) { \
 		__auto_type x = (arr)[i]; \
-		for (j = i ; (j > 0 && cmp(((arr)[j-1]),x)) ; --j) { \
+		for (j = i ; (j > 0 && cmp(((arr)[j-1]), x, cmp_data)) ; --j) { \
 			(arr)[j] = (arr)[j-1]; \
 		} \
 		(arr)[j] = x; \
