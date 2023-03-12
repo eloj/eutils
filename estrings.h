@@ -33,6 +33,7 @@ char *read_entire_file(const char *filename, size_t *len);
 #include <assert.h>
 #include <ctype.h> // for isxdigit()
 #include <stdarg.h>
+#include <stdlib.h>
 
 void fprint_hex(FILE *f, const uint8_t *data, size_t len, int width, const char *indent, int show_offset) {
 	for (size_t i = 0 ; i < len ; ++i) {

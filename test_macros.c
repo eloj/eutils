@@ -4,13 +4,14 @@
 
 	See https://github.com/eloj/eutils
 */
+#include "emacros.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
 #include <stdint.h>
 
-#include "emacros.h"
 #include "internal/tests.h"
 
 static int test_MIN(void) {

@@ -4,6 +4,9 @@
 
 	See https://github.com/eloj/eutils
 */
+#define EUTILS_IMPLEMENTATION
+#include "earrays.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -12,9 +15,6 @@
 
 #include "emacros.h"
 #include "internal/tests.h"
-
-#define EUTILS_IMPLEMENTATION
-#include "earrays.h"
 
 struct tile_t {
 	int dummy;

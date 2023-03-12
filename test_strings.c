@@ -4,8 +4,10 @@
 
 	See https://github.com/eloj/eutils
 */
+#define EUTILS_IMPLEMENTATION
+#include "estrings.h"
+
 #include <stdio.h>
-#include <stdlib.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <string.h>
@@ -13,9 +15,6 @@
 
 #include "emacros.h"
 #include "internal/tests.h"
-
-#define EUTILS_IMPLEMENTATION
-#include "estrings.h"
 
 static int debug = 0;
 static int debug_hex = 1;
