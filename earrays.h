@@ -31,6 +31,8 @@ extern "C" {
 #define sort_array_simple_impl(arr, n, cmp, cmp_data, j, x) do { \
 	_Pragma("GCC diagnostic push") \
 	_Pragma("GCC diagnostic ignored \"-Wtype-limits\"") \
+	/* Attempt to signal compiler that these inputs can't alias */ \
+	assert(&arr[0] != cmp_data); \
 	size_t j; \
 	for (size_t i = 1 ; i < (n) ; ++i) { \
 		__auto_type x = (arr)[i]; \
