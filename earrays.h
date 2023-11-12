@@ -120,13 +120,13 @@ static int gcd(int a, int b) {
 }
 
 void rotate_array_cb(void *arr, int n, int d, rot_cb cb, void *ctx) {
-	if (d == 0 || n == 0)
+	if (d == 0 || n <= 0)
 		return;
-	if (d < 0) {
-		d = n - (-d % n);
-	} else {
-		d = d % n;
-	}
+
+	if (d > 0)
+		d = (d % n);
+	else
+		d = (d % n) + n; // Modulus of negative number. Other languages may need 'd = n - (-d % n)'
 
 	int steps = gcd(d, n);
 	for (int i=0 ; i < steps ; ++i) {
