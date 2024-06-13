@@ -1,7 +1,7 @@
 #pragma once
 /*
 	OpenGL Helper Functions
-	Copyright (c) 2020, 2023, Eddy L O Jansson. Licensed under The MIT License.
+	Copyright (c) 2020, 2023, 2024 Eddy L O Jansson. Licensed under The MIT License.
 
 	See https://github.com/eloj/eutils
 */
@@ -12,6 +12,8 @@ extern "C" {
 const char* glhelper_debug_source_str(GLenum source);
 const char* glhelper_debug_severity_str(GLenum severity);
 const char* glhelper_debug_type_str(GLenum type);
+
+void glhelper_report_context(FILE* target);
 
 int glhelper_install_debug_callback(GLDEBUGPROC callback, void *cbdata);
 
@@ -93,6 +95,33 @@ const char* glhelper_debug_type_str(GLenum type) {
 			break;
 	}
 	return msg;
+}
+
+void glhelper_report_context(FILE* target) {
+	int flags = 0;
+
+	glGetIntegerv(GL_CONTEXT_PROFILE_MASK, &flags);
+	if (flags & GL_CONTEXT_CORE_PROFILE_BIT) {
+		fprintf(target, "Core context");
+	} else if (flags & GL_CONTEXT_COMPATIBILITY_PROFILE_BIT) {
+		fprintf(target, "Compatibility context");
+	}
+
+	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+	fprintf(target, " with GL_CONTEXT_FLAG_{ ");
+	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+		fprintf(target, "DEBUG ");
+	}
+	if (flags & GL_CONTEXT_FLAG_FORWARD_COMPATIBLE_BIT) {
+		fprintf(target, "FORWARD_COMPATIBLE ");
+	}
+	if (flags & GL_CONTEXT_FLAG_ROBUST_ACCESS_BIT) {
+		fprintf(target, "ROBUST_ACCESS ");
+	}
+	if (flags & GL_CONTEXT_FLAG_NO_ERROR_BIT) {
+		fprintf(target, "NO_ERROR ");
+	}
+	fprintf(target, "}_BIT\n");
 }
 
 static void glhelper_default_error_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *data) {
