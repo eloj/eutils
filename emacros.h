@@ -70,14 +70,15 @@
 
 // Linearly interpolate v0->v1, where t is in [0, 1].
 //
-// Compiler Explorer Verified that both GCC and clang compile this into
-// vsubss+vfmadd231ss at -O2 when AVX available.
+// A lot can be said about the properties of a lerp, this is a tradeoff.
 //
 #define LERP(v0, v1, t) LERP_IMPL(v0, v1, t, GENID(x), GENID(y))
 #define LERP_IMPL(v0, v1, t, xID, yID) ({ \
 	__auto_type xID = (v0); \
 	__auto_type yID = (v1); \
 	MACRO_TYPE_ASSERT(xID, yID); \
-	(xID + (t) * (yID - xID)); \
+	(t < 0.5f ? xID + (yID - xID) * (t) : yID + (yID - xID) * (t - 1)); \
 })
-// ALT: return (1 - t) * v0 + t * v1; // non-monotonic but precise at t=1=v1
+// ALT: t == 1 ? b : a + (b - a) * t; // preferable, but equality on floats raises warning.
+// ALT: (xID + (t) * (yID - xID)); // simple but non-exact
+// ALT: return (1 - t) * v0 + t * v1; // non-monotonic but exact at t=1=v1
