@@ -1,8 +1,8 @@
-# C11+ Utility Functions & Macros
+# C23+ Utility Functions & Macros
 
 [![Build status](https://github.com/eloj/eutils/workflows/build/badge.svg)](https://github.com/eloj/eutils/actions/workflows/build.yml)
 
-A collection of standalone C11+ functions and macros.
+A collection of standalone C23+ functions and macros.
 
 I don't expect anyone else to use any of this, but you're welcome to it if you want.
 

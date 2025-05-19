@@ -1,13 +1,10 @@
 #pragma once
 /*
-	Utility Macros (C11+)
+	Utility Macros (C23+)
 	Copyright (c) 2022, 2023, Eddy L O Jansson. Licensed under The MIT License.
 
 	See https://github.com/eloj/eutils
 */
-
-// TODO: For c23, replace '__auto_type' with 'auto', '__typeof__ with 'typeof'(?)
-// TODO: For c23, replace '_Static_assert' with 'static_assert'
 
 #ifndef STRINGIFY
 #define STRINGIFY_INTERNAL(x) #x
@@ -20,7 +17,7 @@
 #endif
 
 #ifndef SWAP
-#define SWAP(a, b) do { __auto_type T = (a); a = b; b = T; } while (0)
+#define SWAP(a, b) do { auto T = (a); a = b; b = T; } while (0)
 #endif
 
 #ifndef ARRAY_SIZE
@@ -31,8 +28,7 @@
 #define UNUSED(x) (x) __attribute__((unused))
 #endif
 
-// Requires C11 + __typeof__ extension
-#define MACRO_TYPE_ASSERT_IMPL(a, b, line) _Static_assert(_Generic((a), __typeof__(b):1, default:0), "Type mismatch in macro at line " STRINGIFY(line))
+#define MACRO_TYPE_ASSERT_IMPL(a, b, line) static_assert(_Generic((a), typeof(b):1, default:0), "Type mismatch in macro at line " STRINGIFY(line))
 #define MACRO_TYPE_ASSERT(a, b) MACRO_TYPE_ASSERT_IMPL(a, b, __LINE__)
 
 // Generate identifier that includes the line number to aid debugging.

@@ -1,9 +1,19 @@
-ARCH:=x86-64-v3
-OPT=-O3 -fomit-frame-pointer -fstrict-aliasing -march=$(ARCH) -mtune=native -msse4.2 -mavx2 -fno-math-errno
+OPT=-O3 -fomit-frame-pointer -fstrict-aliasing -fno-math-errno -march=native -mtune=native
 WARNFLAGS=-Wall -Wextra -Wshadow -Wstrict-aliasing -Wcast-qual -Wcast-align -Wpointer-arith -Wredundant-decls -Wfloat-equal -Wdouble-promotion -Wswitch-enum
 CWARNFLAGS=-Wstrict-prototypes -Wmissing-prototypes
 MISCFLAGS=-fstack-protector -fvisibility=hidden
 DEVFLAGS=-ggdb -Wno-unused -D_FORTIFY_SOURCE=3
+
+#
+# Some architecture specific flags
+#
+ARCH:=$(shell uname -m)
+ifeq ($(ARCH),x86_64)
+ARCHFLAGS=-fcf-protection
+endif
+ifeq ($(ARCH),aarch64)
+ARCHFLAGS=-mbranch-protection=bti
+endif
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -35,7 +45,7 @@ else
 	MISCFLAGS+=$(DEVFLAGS)
 endif
 
-CFLAGS=-std=c11 $(OPT) $(CWARNFLAGS) $(WARNFLAGS) $(MISCFLAGS)
+CFLAGS=-std=c23 $(OPT) $(CWARNFLAGS) $(WARNFLAGS) $(ARCHFLAGS) $(MISCFLAGS)
 
 LIBVER := 1.0.0
 PREFIX ?= /usr/local
