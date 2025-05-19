@@ -12,10 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Compiler version
         run: cc --version
-      - name: Build
-        run: make
+      - name: Build Clang
+        run: CC=clang make -B
+# Need GCC 14.1+ in the ubuntu-latest image to enable this.
+#      - name: Build GCC
+#        run: CC=gcc make -B
       - name: Test
         run: make test
