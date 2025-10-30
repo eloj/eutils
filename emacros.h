@@ -1,7 +1,7 @@
 #pragma once
 /*
 	Utility Macros (C23+)
-	Copyright (c) 2022, 2023, Eddy L O Jansson. Licensed under The MIT License.
+	Copyright (c) 2022, 2023, 2025, Eddy Jansson. Licensed under The MIT License.
 
 	See https://github.com/eloj/eutils
 */
@@ -77,3 +77,15 @@
 	(xID + (t) * (yID - xID)); \
 })
 // ALT: return (1 - t) * v0 + t * v1; // non-monotonic but precise at t=1=v1
+
+// Joe Gruff's Device
+// example: FPRINTF_COMMA_LIST(arr, ARRAY_SIZE(arr), "%s", "\n", stdout);
+#define FPRINTF_COMMA_LIST(arr, n, fmt, tail, file) { \
+	int i = 0; \
+	switch (n) for (; i < (n); ++i) { \
+		fprintf(file, ", "); /* FALLTHROUGH */ \
+		default: { fprintf(file, fmt, (arr[i])); } /* FALLTHROUGH */ \
+		case 0:  { }; \
+	} \
+	if (*tail) fprintf(file, "%s", tail); \
+}
