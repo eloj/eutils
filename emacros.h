@@ -21,8 +21,12 @@
 #endif
 
 #ifndef ARRAY_SIZE
+#if defined(__STDC_VERSION_STDCOUNTOF_H__) || (defined(__has_include) && __has_include(<stdcountof.h>))
+#define ARRAY_SIZE(arr) _Countof(arr)
+#else
 #define ARRAY_SIZE(arr) (sizeof(arr)/sizeof(arr[0]))
 #endif
+#endif // ARRAY_SIZE
 
 #ifndef UNUSED
 #define UNUSED(x) (x) __attribute__((unused))
