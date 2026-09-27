@@ -124,7 +124,7 @@ void glhelper_report_context(FILE* target) {
 	fprintf(target, "}_BIT\n");
 }
 
-static void glhelper_default_error_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void *data) {
+static void glhelper_default_error_callback(GLenum source, GLenum type, GLuint /*id*/, GLenum severity, GLsizei /*length*/, const GLchar* message, const void */*data*/) {
 #if 0
 	// Ignore some nVidia spam about buffer object memory type.
 	if (source == GL_DEBUG_SOURCE_API && severity == GL_DEBUG_SEVERITY_NOTIFICATION && type == GL_DEBUG_TYPE_OTHER)
