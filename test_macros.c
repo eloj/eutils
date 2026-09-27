@@ -80,6 +80,8 @@ static int test_LERP(void) {
 int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
+	printf("__STDC_VERSION__ = " STRINGIFY(__STDC_VERSION__) "\n");
+
 	failed += test_MIN();
 	failed += test_MAX();
 	failed += test_CLAMP();
