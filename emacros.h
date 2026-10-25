@@ -83,13 +83,16 @@
 // ALT: return (1 - t) * v0 + t * v1; // non-monotonic but precise at t=1=v1
 
 // Joe Gruff's Device
-// example: FPRINTF_COMMA_LIST(arr, ARRAY_SIZE(arr), "%s", "\n", stdout);
-#define FPRINTF_COMMA_LIST(arr, n, fmt, tail, file) { \
+// example: FPRINTF_SEP_LIST(arr, ARRAY_SIZE(arr), "%s", ", ", "\n", stdout);
+#define FPRINTF_SEP_LIST(arr, n, fmt, separator, tail, file) { \
 	int i = 0; \
 	switch (n) for (; i < (n); ++i) { \
-		fprintf(file, ", "); /* FALLTHROUGH */ \
+		fprintf(file, separator); /* FALLTHROUGH */ \
 		default: { fprintf(file, fmt, (arr[i])); } /* FALLTHROUGH */ \
 		case 0:  { }; \
 	} \
 	if (*tail) fprintf(file, "%s", tail); \
 }
+
+#define FPRINTF_COMMA_LIST(arr, n, fmt, tail, file) \
+	FPRINTF_SEP_LIST(arr, n, fmt, ", ", tail, file)

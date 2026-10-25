@@ -1,6 +1,6 @@
 /*
 	Tests for Utility Macros
-	Copyright (c) 2023, Eddy L O Jansson. Licensed under The MIT License.
+	Copyright (c) 2023, 2026 Eddy Jansson. Licensed under The MIT License.
 
 	See https://github.com/eloj/eutils
 */
@@ -77,6 +77,18 @@ static int test_LERP(void) {
 	TEST_END();
 }
 
+// This is just a compile test.
+static int test_FPRINTF_SEP_LIST(void) {
+	TEST_START(FPRINTF_SEP_LIST);
+	int res;
+	const char * list[] = { "one", "two", "three" };
+
+	FPRINTF_SEP_LIST(list, 3, "%s", ", ", "\n", stdout);
+	FPRINTF_COMMA_LIST(list, 3, "%s", "\n", stdout);
+
+	TEST_END();
+}
+
 int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	size_t failed = 0;
 
@@ -86,6 +98,7 @@ int main(int UNUSED(argc), char UNUSED(*argv[])) {
 	failed += test_MAX();
 	failed += test_CLAMP();
 	failed += test_LERP();
+	failed += test_FPRINTF_SEP_LIST();
 
 	if (failed != 0) {
 		printf("Tests " RED "FAILED" NC "\n");
